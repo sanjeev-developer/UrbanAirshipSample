@@ -17,6 +17,9 @@
           with:
             java-version: 1.8
 
+        - name: giving permission
+          run: chmod +x gradlew
+
         - name: Run Tests
           run: ./gradlew test
 
