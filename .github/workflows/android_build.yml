@@ -5,7 +5,7 @@ name: ANdroid Build
 on: pull_request
 
 jobs:
-    sanjeeeev:
+    sanjeeeevvvvv:
       #Mentioning on which os the repo should checkout to run
       runs-on: ubuntu-latest
       #This is checking out the repo on ubuntu to run futhur steps
