@@ -1,17 +1,45 @@
 
-  name: ANdroid Build
+name: ANdroid Build
 
+  #mentioning on what the action should trigger
+on: pull_request
 
-  on: pull_request
-
-  jobs:
-    build:
-
+jobs:
+    sanjeev:
+      #Mentioning on which os the repo should checkout to run
       runs-on: ubuntu-latest
-
+      #This is checking out the repo on ubuntu to run futhur steps
       steps:
-        - uses: actions/checkout@v1
+        - uses: actions/checkout@v2
 
+        #The lint tool checks your Android project source files for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization
+        - name: Run Lint
+          run: ./gradlew lintDebug
+        #Making and uploading the report in html form
+        - name: upload html test rport
+          run: actions/upload-artifact@v2
+          with:
+            name: lintReport.html
+            path: app/build/reports/lint-results-debug.html
+
+    #this is to run the unit test cases
+    unit-test:
+        needs: [lint]
+        runs-on: ubuntu-latest
+        steps:
+          - name: checkout the code
+            uses: actions/checkout@v2
+
+          - name: run tests
+            run: ./gradlew test
+
+          - name: upload the test report
+            uses: actions/upload-artifact@v2
+           with:
+           - name: unit test report
+             path: app/build/reports/tests/testDebugUnitTest/
+
+        #setting up env to run
         - name: set up jdk
           uses: actions/setup-java@v1
           with:
