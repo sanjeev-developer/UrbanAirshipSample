@@ -1,59 +1,75 @@
+name: Music Radio CICD
 
-name: ANdroid Build
-
-  #mentioning on what the action should trigger
-on: pull_request
+#mentioning on what the action should trigger
+on:
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
-    sanjeev:
-      #Mentioning on which os the repo should checkout to run
+  lint-test:
+    #Mentioning on which os the repo should checkout to run
+    runs-on: ubuntu-latest
+    name: Running lint test
+    #This is checking out the repo on ubuntu to run futhur steps
+    steps:
+      - uses: actions/checkout@v3
+      #The lint tool checks your Android project source files for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization
+      - name: Run Lint
+        run: ./gradlew lint
+      #Making and uploading the report in html form
+      - name: upload html test rport
+        run: actions/upload-artifact@v3
+        with:
+          name: lintReport.html
+          path: app/build/reports/lint-results-debug.html
+
+  #this is to run the unit test cases
+  unit-test:
+    needs: [ lint-test ]
+    runs-on: ubuntu-latest
+    name: Running unit test
+    steps:
+      - name: checkout the code
+        uses: actions/checkout@v3
+
+      - name: run tests
+        run: ./gradlew test
+
+      - name: upload the test report
+        uses: actions/upload-artifact@v2
+        with:
+            name: unit test report
+            path: app/build/reports/tests/testDebugUnitTest/
+
+  #setting up env to run and building apk
+  build:
+      needs: [ lint-test, unit-test ]
+      name: Verifying Build
       runs-on: ubuntu-latest
-      #This is checking out the repo on ubuntu to run futhur steps
       steps:
-        - uses: actions/checkout@v2
+      - name: checkout the code
+        uses: actions/checkout@v3
 
-        #The lint tool checks your Android project source files for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization
-        - name: Run Lint
-          run: ./gradlew lintDebug
-        #Making and uploading the report in html form
-        - name: upload html test rport
-          run: actions/upload-artifact@v2
-          with:
-            name: lintReport.html
-            path: app/build/reports/lint-results-debug.html
+      - name: set up jdk
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
 
-    #this is to run the unit test cases
-    unit-test:
-        needs: [lint]
+      - name: giving permission
+        run: chmod +x gradlew
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: Music-Radio.apk
+          path: app/build/outputs/apk/debug/music-radio-debug.apk
+
+  success:
+        needs: [ code-style, test ]
         runs-on: ubuntu-latest
         steps:
-          - name: checkout the code
-            uses: actions/checkout@v2
-
-          - name: run tests
-            run: ./gradlew test
-
-          - name: upload the test report
-            uses: actions/upload-artifact@v2
-           with:
-           - name: unit test report
-             path: app/build/reports/tests/testDebugUnitTest/
-
-        #setting up env to run
-        - name: set up jdk
-          uses: actions/setup-java@v1
-          with:
-            java-version: 11
-
-        - name: giving permission
-          run: chmod +x gradlew
-
-        - name: Run Tests
-          run: ./gradlew test
-
-        - name: Build project
-          run: ./gradlew assemble
-
-
-
-
+          - run: echo Success!

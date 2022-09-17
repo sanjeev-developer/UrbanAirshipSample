@@ -1,0 +1,40 @@
+name: Build & Distribute
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+
+  build_and_distribute:
+    name: Generate Build and distribute
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the Repo
+        uses: actions/checkout@v3
+
+      #upgarding the version with every merge to dev
+      - name: Bump Version Code
+        uses: chkfung/android-version-actions@v1.1
+        with:
+          gradlePath: app/build.gradle.kts
+          versionCode: ${{ github.run_number }}
+
+       #setting up env to run and building apk
+      - name: set up jdk
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: giving permission
+        run: chmod +x gradlew
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: Music-Radio.apk
+          path: app/build/outputs/apk/debug/music-radio-debug.apk
