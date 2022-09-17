@@ -1,10 +1,7 @@
 name: Music Radio CICD
 
 #mentioning on what the action should trigger
-on:
-  pull_request:
-    branches: [ master ]
-  workflow_dispatch:
+on: pull_request
 
 jobs:
   lint-test:
