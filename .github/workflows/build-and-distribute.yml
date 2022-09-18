@@ -19,16 +19,16 @@ jobs:
          java-version: 17
          cache: gradle
 
+      - name: set up jdk
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
       - name: Bump Version Code
         uses: chkfung/android-version-actions@v1.1
         with:
           gradlePath: app/build.gradle.kts
           versionCode: ${{ github.run_number }}
-
-      - name: set up jdk
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
 
       - name: giving permission
         run: chmod +x gradlew
