@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       #The lint tool checks your Android project source files for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization
+      - name: giving permission
+        run: chmod +x gradlew
+      
       - name: Run Lint
         run: ./gradlew lint
       #Making and uploading the report in html form
