@@ -1,4 +1,4 @@
-name: Music Radio CICD
+name: Music Radio Continious Integration
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: Build & Distribute
+name: Music Radio Continious Development
 
 on:
   push:

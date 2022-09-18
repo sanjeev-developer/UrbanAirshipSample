@@ -7,6 +7,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        println("sanjeev gupta test0vsvddvgh0b402m,.m,kuyffff2354fsnvnvbmdafasdvbmv65417")
+        println("sanjeev gupta tehghst0vsvddvgh0b402m,.m,kuyffff2354fsnvnvbmdafasdvbmv65417")
     }
 }
