@@ -6,10 +6,27 @@ on: pull_request
 jobs:
   lint-test:
     #Mentioning on which os the repo should checkout to run
+    name: Running lint test
     runs-on: ubuntu-latest
     #This is checking out the repo on ubuntu to run futhur steps
     steps:
       - uses: actions/checkout@v3
+
+      - name: Cache Gradle and Wrapper
+        uses: actions/cache@v2
+        with:
+         path: |
+              ~/.gradle/caches
+              ~/.gradle/wrapper
+            key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      - name: Restore gradle.properties
+        env:
+           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+           run: |
+                mkdir -p ~/.gradle/
+                echo "GRADLE_USER_HOME=${HOME}/.gradle" >> $GITHUB_ENV
+                echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
       #The lint tool checks your Android project source files for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization
       - name: giving permission
         run: chmod +x gradlew
@@ -25,12 +42,29 @@ jobs:
 
   #this is to run the unit test cases
   unit-test:
+    name: Running unit test
     needs: [ lint-test ]
     runs-on: ubuntu-latest
 
     steps:
       - name: checkout the code
         uses: actions/checkout@v3
+
+      - name: Cache Gradle and Wrapper
+        uses: actions/cache@v2
+        with:
+          path: |
+              ~/.gradle/caches
+              ~/.gradle/wrapper
+              key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      - name: Restore gradle.properties
+        env:
+         GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+        run: |
+           mkdir -p ~/.gradle/
+           echo "GRADLE_USER_HOME=${HOME}/.gradle" >> $GITHUB_ENV
+           echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
 
       - name: giving permission
         run: chmod +x gradlew
@@ -46,11 +80,28 @@ jobs:
 
   #setting up env to run and building apk
   build-verification:
+      name: Verifying the build
       needs: [ lint-test, unit-test ]
       runs-on: ubuntu-latest
       steps:
       - name: checkout the code
         uses: actions/checkout@v3
+
+      - name: Cache Gradle and Wrapper
+        uses: actions/cache@v2
+        with:
+         path: |
+                  ~/.gradle/caches
+                  ~/.gradle/wrapper
+                  key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      - name: Restore gradle.properties
+        env:
+          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+        run: |
+           mkdir -p ~/.gradle/
+           echo "GRADLE_USER_HOME=${HOME}/.gradle" >> $GITHUB_ENV
+           echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
 
       - name: set up jdk
         uses: actions/setup-java@v1
@@ -67,7 +118,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Music-Radio.apk
-          path: app/build/outputs/apk/debug/music-radio-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
 
   success:
         needs: [ lint-test, unit-test, build-verification ]
