@@ -1,13 +1,10 @@
 name: Music Radio CICD
 
 #mentioning on what the action should trigger
-on:
-  pull_request:
-    branches: [ master ]
-  workflow_dispatch:
+on: pull_request
 
 jobs:
-  lint-testt:
+  lint-test:
     #Mentioning on which os the repo should checkout to run
     runs-on: ubuntu-latest
     name: Running lint test
