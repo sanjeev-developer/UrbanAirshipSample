@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint-test:
+  lint-testt:
     #Mentioning on which os the repo should checkout to run
     runs-on: ubuntu-latest
     name: Running lint test
