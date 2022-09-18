@@ -5,8 +5,8 @@ on:
     branches: [ master ]
 
 jobs:
-  build_and_distribute:
-    name: Generate Build and distribute
+  generate_build:
+    name: Generating Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the Repo
@@ -19,16 +19,16 @@ jobs:
          java-version: 17
          cache: gradle
 
+      - name: set up jdk
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
       - name: Bump Version Code
         uses: chkfung/android-version-actions@v1.1
         with:
           gradlePath: app/build.gradle.kts
           versionCode: ${{ github.run_number }}
-
-      - name: set up jdk
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
 
       - name: giving permission
         run: chmod +x gradlew
@@ -41,6 +41,14 @@ jobs:
         with:
           name: Music-Radio.apk
           path: app/build/outputs/apk/debug/app-debug.apk
+
+  distribute_build:
+    needs: [ Generate_build ]
+    name: Distributing build on Firebase and Microsoft team
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the Repo
+        uses: actions/checkout@v3
 
       - name: Upload Artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -56,3 +64,9 @@ jobs:
         with:
           webhook_url: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
           job: ${{ toJson(job) }}
+
+  success:
+    needs: [ Generate_build, Distribute_build ]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo Success!
