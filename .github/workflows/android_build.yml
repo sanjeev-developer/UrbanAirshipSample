@@ -1,16 +1,14 @@
 name: Music Radio CICD
 
-#mentioning on what the action should trigger
 on:
   pull_request:
     branches: [ master ]
 
 jobs:
   lint-test:
-    #Mentioning on which os the repo should checkout to run
     name: Running lint test
     runs-on: ubuntu-latest
-    #This is checking out the repo on ubuntu to run futhur steps
+
     steps:
       - name: checkout the code
         uses: actions/checkout@v3
@@ -22,20 +20,18 @@ jobs:
          java-version: 17
          cache: gradle
 
-      #The lint tool checks your Android project source files for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization
       - name: giving permission
         run: chmod +x gradlew
 
       - name: Run Lint
         run: ./gradlew lint
-      #Making and uploading the report in html form
+
       - name: upload html test rport
         uses: actions/upload-artifact@v3
         with:
           name: lintReport.html
           path: app/build/reports/lint-results-debug.html
 
-  #this is to run the unit test cases
   unit-test:
     name: Running unit test
     needs: [ lint-test ]
@@ -64,7 +60,6 @@ jobs:
             name: unit test report
             path: app/build/reports/tests/testDebugUnitTest/
 
-  #setting up env to run and building apk
   build-verification:
       name: Verifying the build
       needs: [ lint-test, unit-test ]
