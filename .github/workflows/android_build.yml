@@ -15,7 +15,7 @@ jobs:
         run: ./gradlew lint
       #Making and uploading the report in html form
       - name: upload html test rport
-        run: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: lintReport.html
           path: app/build/reports/lint-results-debug.html
