@@ -10,23 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     #This is checking out the repo on ubuntu to run futhur steps
     steps:
+      - name: checkout the code
       - uses: actions/checkout@v3
 
-      - name: Cache Gradle and Wrapper
-        uses: actions/cache@v2
+      - name: caching and restoring the gradle
+      - uses: actions/setup-java@v2
         with:
-         path: |
-              ~/.gradle/caches
-              ~/.gradle/wrapper
-            key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+         distribution: temurin
+         java-version: 17
+         cache: gradle
 
-      - name: Restore gradle.properties
-        env:
-           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-           run: |
-                mkdir -p ~/.gradle/
-                echo "GRADLE_USER_HOME=${HOME}/.gradle" >> $GITHUB_ENV
-                echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
       #The lint tool checks your Android project source files for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization
       - name: giving permission
         run: chmod +x gradlew
@@ -50,21 +43,12 @@ jobs:
       - name: checkout the code
         uses: actions/checkout@v3
 
-      - name: Cache Gradle and Wrapper
-        uses: actions/cache@v2
+      - name: caching and restoring the gradle
+      - uses: actions/setup-java@v2
         with:
-          path: |
-              ~/.gradle/caches
-              ~/.gradle/wrapper
-              key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-
-      - name: Restore gradle.properties
-        env:
-         GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-        run: |
-           mkdir -p ~/.gradle/
-           echo "GRADLE_USER_HOME=${HOME}/.gradle" >> $GITHUB_ENV
-           echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
+          distribution: temurin
+          java-version: 17
+          cache: gradle
 
       - name: giving permission
         run: chmod +x gradlew
@@ -87,21 +71,12 @@ jobs:
       - name: checkout the code
         uses: actions/checkout@v3
 
-      - name: Cache Gradle and Wrapper
-        uses: actions/cache@v2
+      - name: caching and restoring the gradle
+      - uses: actions/setup-java@v2
         with:
-         path: |
-                  ~/.gradle/caches
-                  ~/.gradle/wrapper
-                  key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-
-      - name: Restore gradle.properties
-        env:
-          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-        run: |
-           mkdir -p ~/.gradle/
-           echo "GRADLE_USER_HOME=${HOME}/.gradle" >> $GITHUB_ENV
-           echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
+          distribution: temurin
+          java-version: 17
+          cache: gradle
 
       - name: set up jdk
         uses: actions/setup-java@v1
