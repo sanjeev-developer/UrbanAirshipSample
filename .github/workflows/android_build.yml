@@ -1,11 +1,13 @@
 name: Music Radio Continious Integration
 
+#on what the action should trigger
 on:
   pull_request:
     branches: [ master ]
 
 jobs:
   lint-test:
+    #on which os the repo should checkout to run
     name: Running lint test
     runs-on: ubuntu-latest
 
@@ -13,6 +15,7 @@ jobs:
       - name: checkout the code
         uses: actions/checkout@v3
 
+        #caching and restoring the gradle for faster execution
       - name: caching and restoring the gradle
         uses: actions/setup-java@v2
         with:
@@ -23,15 +26,18 @@ jobs:
       - name: giving permission
         run: chmod +x gradlew
 
+        #The lint tool checks your Android project source files for potential bugs and optimization improvements for correctness, security, performance, usability, accessibility, and internationalization
       - name: Run Lint
         run: ./gradlew lint
 
-      - name: upload html test rport
+       #creating html test report
+      - name: upload html test report
         uses: actions/upload-artifact@v3
         with:
           name: lintReport.html
           path: app/build/reports/lint-results-debug.html
 
+  #Running unit test cases
   unit-test:
     name: Running unit test
     needs: [ lint-test ]
@@ -60,6 +66,7 @@ jobs:
             name: unit test report
             path: app/build/reports/tests/testDebugUnitTest/
 
+  #building apk
   build-verification:
       name: Verifying the build
       needs: [ lint-test, unit-test ]

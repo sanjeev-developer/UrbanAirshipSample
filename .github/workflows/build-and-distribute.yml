@@ -1,11 +1,12 @@
 name: Music Radio Continious Development
-
+#on what the action should trigger
 on:
   push:
     branches: [ master ]
 
 jobs:
   generate_build:
+    #on which os the repo should checkout to run
     name: Generating Build
     runs-on: ubuntu-latest
     steps:
@@ -24,6 +25,7 @@ jobs:
         with:
           java-version: 11
 
+      #Auto-incrementing the version code on every new build
       - name: Bump Version Code
         uses: chkfung/android-version-actions@v1.1
         with:
@@ -42,6 +44,7 @@ jobs:
           name: Music-Radio.apk
           path: app/build/outputs/apk/debug/app-debug.apk
 
+  #uploading the apk to Firebase and Microsoft team
   distribute_build:
     needs: [ Generate_build ]
     name: Distributing build on Firebase and Microsoft team
